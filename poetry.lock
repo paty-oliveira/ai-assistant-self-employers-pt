@@ -1232,6 +1232,22 @@ llama-index-core = ">=0.13.0,<0.14"
 openai = ">=1.1.0"
 
 [[package]]
+name = "llama-index-indices-managed-llama-cloud"
+version = "0.9.0"
+description = "llama-index indices llama-cloud integration"
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["main"]
+files = [
+    {file = "llama_index_indices_managed_llama_cloud-0.9.0-py3-none-any.whl", hash = "sha256:392910b84fcd479d5e728553741af4f99dac7d4c56d6f0fc8e401b23f1462d09"},
+    {file = "llama_index_indices_managed_llama_cloud-0.9.0.tar.gz", hash = "sha256:fbaadb6ae3ee712daf439aa9be367ede1f8b190018b55010d7c35375d29ce4b7"},
+]
+
+[package.dependencies]
+llama-cloud = "0.1.35"
+llama-index-core = ">=0.13.0,<0.14"
+
+[[package]]
 name = "llama-index-instrumentation"
 version = "0.3.0"
 description = "Add your description here"
@@ -3188,4 +3204,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "<4.0,>=3.9"
-content-hash = "3a35fef75936ebdfc7a49d3376bbad527ba59c322b233ee0f40345eecfbd082d"
+content-hash = "6126dda583212adaea03f688891e16786a211dc1c3d5d3c1f41d4909426f1a27"
