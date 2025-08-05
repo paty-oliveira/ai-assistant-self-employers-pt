@@ -1,4 +1,10 @@
-class LlamaPDFParser:
+class LlmaCloudService:
+
+    def __init__(self, api_key):
+        """
+        Initializes the LlamaParse service with the provided API key.
+        """
+        self.api_key = api_key
 
     def parse(self, file_path):
         """

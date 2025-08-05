@@ -18,7 +18,7 @@ dependencies = [
     "llama-index-readers-file (>=0.5.0,<0.6.0)",
     "llama-parse (>=0.6.53,<0.7.0)",
     "llama-index-embeddings-openai (>=0.5.0,<0.6.0)",
-    "llama-index-indices-managed-llama-cloud (>=0.9.0,<0.10.0)"
+    "llama-index-indices-managed-llama-cloud (>=0.9.0,<0.10.0)",
 ]
 
 [tool.poetry]
@@ -28,6 +28,8 @@ package-mode = false
 pre-commit = "^4.2.0"
 black = "^25.1.0"
 isort = "^6.0.1"
+pytest-mock = "^3.14.1"
+pytest = "^8.4.1"
 
 [tool.isort]
 profile = "black"
@@ -35,6 +37,10 @@ profile = "black"
 [tool.black]
 line-length = 120
 target-version = ["py312"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
