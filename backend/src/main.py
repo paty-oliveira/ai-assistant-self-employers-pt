@@ -1,5 +1,26 @@
-from .parser import PDFParser
-from .llama_cloud import LlmaCloudService
+from parser import PDFParser
+from llama_cloud_service import LlmaCloudService
+from dotenv import load_dotenv
+import os
+
 
 if __name__ == "__main__":
-    print("This is the main entry point of the backend application.")
+    load_dotenv()
+    LLAMA_CLOUD_API = os.getenv("LLAMA_CLOUD_API_KEY")
+
+    if not LLAMA_CLOUD_API:
+        raise ValueError("LLAMA_API_KEY environment variable is not set.")
+
+    llama_parser = LlmaCloudService(api_key=LLAMA_CLOUD_API)
+
+    pdf_files = [
+        os.path.abspath("pdfs/novo_regime.pdf"),
+        os.path.abspath("pdfs/perguntas_frequentes.pdf"),
+    ]
+
+    pdf_parser = PDFParser(
+        file_paths=pdf_files,
+        parser_service=llama_parser,
+        result_type="text"
+    )
+    documents = pdf_parser.parse()
