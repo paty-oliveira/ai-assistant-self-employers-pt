@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from service import IndexService
+
 
 class BaseIndexer(ABC):
     def __init__(self, index_name: str):

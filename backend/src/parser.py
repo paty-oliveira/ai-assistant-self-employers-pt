@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from service import PDFParserService
+
 
 class BaseParser(ABC):
     def __init__(self, file_paths: list[str]):

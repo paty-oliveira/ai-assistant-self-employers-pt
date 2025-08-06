@@ -4,13 +4,13 @@ repos:
   hooks:
     - id: black
       name: black
-      entry: poetry --directory backend run black
+      entry: poetry --directory backend run black {files}
       language: system
       types: [file, python]
       files: '^(src|tests)/'
     - id: isort
       name: isort
-      entry: poetry --directory backend run isort
+      entry: poetry --directory backend run isort {files}
       language: system
       types: [file, python]
       files: '^(src|tests)/'

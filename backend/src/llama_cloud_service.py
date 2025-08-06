@@ -1,8 +1,10 @@
-from llama_parse import LlamaParse
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.schema import Document
 from llama_index.indices.managed.llama_cloud import LlamaCloudIndex
+from llama_parse import LlamaParse
+
 from service import IndexService, PDFParserService
+
 
 class LlmaCloudService(IndexService, PDFParserService):
 
@@ -18,18 +20,11 @@ class LlmaCloudService(IndexService, PDFParserService):
         Parses the PDF file using LlamaParse service and returns the content.
         """
 
-        llama_parser = LlamaParse(
-            api_key=self.api_key,
-            model=self.llm_model,
-            result_type=result_type
-        )
+        llama_parser = LlamaParse(api_key=self.api_key, model=self.llm_model, result_type=result_type)
 
         file_extractor = {".pdf": llama_parser}
 
-        documents = SimpleDirectoryReader(
-            input_files=files,
-            file_extractor=file_extractor
-            ).load_data()
+        documents = SimpleDirectoryReader(input_files=files, file_extractor=file_extractor).load_data()
 
         print(f"Parsed {len(documents)} documents from {files}")
 
@@ -44,10 +39,7 @@ class LlmaCloudService(IndexService, PDFParserService):
         try:
             print(f"Creating index {index_name} with {len(documents)} documents...")
             index = LlamaCloudIndex.from_documents(
-                api_key=self.api_key,
-                documents=documents,
-                name=index_name,
-                verbose=True
+                api_key=self.api_key, documents=documents, name=index_name, verbose=True
             )
 
             print(f"Index {index_name} with id {index.pipeline.id} created successfully.")

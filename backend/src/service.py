@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class IndexService(ABC):
     @abstractmethod
     def index_documents(self, index_name: str, documents: list):
@@ -8,6 +9,7 @@ class IndexService(ABC):
         Should be implemented by subclasses.
         """
         pass
+
 
 class PDFParserService(ABC):
     @abstractmethod

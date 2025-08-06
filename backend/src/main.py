@@ -1,9 +1,10 @@
-from parser import PDFParser
-from llama_cloud_service import LlmaCloudService
-from indexer import Indexer
-from dotenv import load_dotenv
 import os
+from parser import PDFParser
 
+from dotenv import load_dotenv
+
+from indexer import Indexer
+from llama_cloud_service import LlmaCloudService
 
 if __name__ == "__main__":
     load_dotenv()
@@ -19,17 +20,10 @@ if __name__ == "__main__":
         os.path.abspath("pdfs/perguntas_frequentes.pdf"),
     ]
 
-    pdf_parser = PDFParser(
-        file_paths=pdf_files,
-        parser_service=llama_service,
-        result_type="text"
-    )
+    pdf_parser = PDFParser(file_paths=pdf_files, parser_service=llama_service, result_type="text")
     documents = pdf_parser.parse()
 
     index_name = "example_index"
-    index_service = Indexer(
-        index_name=index_name,
-        index_service=llama_service
-    )
+    index_service = Indexer(index_name=index_name, index_service=llama_service)
 
     index_service.index(documents)
