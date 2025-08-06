@@ -31,6 +31,8 @@ class LlmaCloudService(IndexService, PDFParserService):
             file_extractor=file_extractor
             ).load_data()
 
+        print(f"Parsed {len(documents)} documents from {files}")
+
         return documents
 
     def index_documents(self, index_name, documents: list[Document]) -> None:
@@ -40,6 +42,7 @@ class LlmaCloudService(IndexService, PDFParserService):
         """
 
         try:
+            print(f"Creating index {index_name} with {len(documents)} documents...")
             index = LlamaCloudIndex.from_documents(
                 api_key=self.api_key,
                 documents=documents,
