@@ -36,3 +36,27 @@ def test_parse_calls_llama_parse_and_simple_directory_reader(mock_reader, mock_l
     )
     mock_reader_instance.load_data.assert_called_once()
     assert result == ["doc1", "doc2"]
+
+@patch("src.llama_cloud_service.LlamaCloudIndex")
+def test_index_documents_creates_index_successfully(mock_llama_index):
+    # Arrange
+    mock_index_instance = MagicMock()
+    mock_llama_index.from_documents.return_value = mock_index_instance
+    mock_index_instance.pipeline.id = "index-id"
+
+    service = LlmaCloudService("api-key")
+    documents = ["doc1", "doc2"]
+    index_name = "test-index"
+
+    # Act
+    service.index_documents(index_name, documents)
+
+    # Assert
+    mock_llama_index.from_documents.assert_called_once_with(
+        api_key="api-key",
+        documents=documents,
+        name=index_name,
+        verbose=True
+    )
+
+    assert mock_index_instance.pipeline.id == "index-id"

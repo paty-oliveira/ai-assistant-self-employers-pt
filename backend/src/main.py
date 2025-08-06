@@ -1,5 +1,6 @@
 from parser import PDFParser
 from llama_cloud_service import LlmaCloudService
+from indexer import Indexer
 from dotenv import load_dotenv
 import os
 
@@ -11,7 +12,7 @@ if __name__ == "__main__":
     if not LLAMA_CLOUD_API:
         raise ValueError("LLAMA_API_KEY environment variable is not set.")
 
-    llama_parser = LlmaCloudService(api_key=LLAMA_CLOUD_API)
+    llama_service = LlmaCloudService(api_key=LLAMA_CLOUD_API)
 
     pdf_files = [
         os.path.abspath("pdfs/novo_regime.pdf"),
@@ -20,7 +21,15 @@ if __name__ == "__main__":
 
     pdf_parser = PDFParser(
         file_paths=pdf_files,
-        parser_service=llama_parser,
+        parser_service=llama_service,
         result_type="text"
     )
     documents = pdf_parser.parse()
+
+    index_name = "example_index"
+    index_service = Indexer(
+        index_name=index_name,
+        index_service=llama_service
+    )
+
+    index_service.index(documents)

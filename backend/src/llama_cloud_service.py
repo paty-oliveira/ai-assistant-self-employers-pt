@@ -1,8 +1,10 @@
 from llama_parse import LlamaParse
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.schema import Document
+from llama_index.indices.managed.llama_cloud import LlamaCloudIndex
+from service import IndexService
 
-class LlmaCloudService:
+class LlmaCloudService(IndexService):
 
     def __init__(self, api_key: str, llm_model="openai-gpt-4-1-mini"):
         """
@@ -30,3 +32,21 @@ class LlmaCloudService:
             ).load_data()
 
         return documents
+
+    def index_documents(self, index_name, documents: list[Document]) -> None:
+        """
+        Indexes the documents in the default vector database provided by
+        IlamaCloud.
+        """
+
+        try:
+            index = LlamaCloudIndex.from_documents(
+                api_key=self.api_key,
+                documents=documents,
+                name=index_name,
+                verbose=True
+            )
+
+            print(f"Index {index_name} with id {index.pipeline.id} created successfully.")
+        except Exception as e:
+            print(f"Error creating index {index_name}: {e}")
