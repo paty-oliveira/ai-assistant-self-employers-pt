@@ -2,9 +2,9 @@ from llama_parse import LlamaParse
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core.schema import Document
 from llama_index.indices.managed.llama_cloud import LlamaCloudIndex
-from service import IndexService
+from service import IndexService, PDFParserService
 
-class LlmaCloudService(IndexService):
+class LlmaCloudService(IndexService, PDFParserService):
 
     def __init__(self, api_key: str, llm_model="openai-gpt-4-1-mini"):
         """
@@ -13,7 +13,7 @@ class LlmaCloudService(IndexService):
         self.api_key = api_key
         self.llm_model = llm_model
 
-    def parse(self, files: list[str], result_type: str) -> list[Document]:
+    def parse_pdf(self, files: list[str], result_type: str) -> list[Document]:
         """
         Parses the PDF file using LlamaParse service and returns the content.
         """

@@ -22,7 +22,7 @@ def test_parse_calls_llama_parse_and_simple_directory_reader(mock_reader, mock_l
     result_type = "text"
 
     # Act
-    result = service.parse(files, result_type)
+    result = service.parse_pdf(files, result_type)
 
     # Assert
     mock_llama_parse.assert_called_once_with(

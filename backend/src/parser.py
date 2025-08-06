@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from service import PDFParserService
 
 class BaseParser(ABC):
     def __init__(self, file_paths: list[str]):
@@ -14,7 +15,7 @@ class BaseParser(ABC):
 
 
 class PDFParser(BaseParser):
-    def __init__(self, file_paths: list[str], parser_service, result_type: str):
+    def __init__(self, file_paths: list[str], parser_service: PDFParserService, result_type: str):
         super().__init__(file_paths)
         self.parser_service = parser_service
         self.result_type = result_type
@@ -23,6 +24,6 @@ class PDFParser(BaseParser):
         """
         Parses the PDF file and returns the content in plain text.
         """
-        content = self.parser_service.parse(self.file_paths, self.result_type)
+        content = self.parser_service.parse_pdf(self.file_paths, self.result_type)
 
         return content
