@@ -23,7 +23,7 @@ class PDFParserService(ABC):
 
 class QueryEngineService(ABC):
     @abstractmethod
-    def execute_query(self, query: str, search_engine: str):
+    def execute_query(self, query: str, search_engine: str) -> str:
         """
         Abstract method to execute a query against a search engine.
         Should be implemented by subclasses.

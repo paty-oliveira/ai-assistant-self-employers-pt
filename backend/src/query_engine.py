@@ -8,13 +8,13 @@ class BaseQueryEngine(ABC):
     Abstract base class for searchers.
     """
 
-    def __init__(self, query: str):
+    def __init__(self, query_text: str):
         """
         Initialize the searcher with a query and a search engine.
 
         :param query: The search query string.
         """
-        self.query = query
+        self.query_text = query_text
 
     @abstractmethod
     def query(self) -> str:
@@ -25,8 +25,8 @@ class BaseQueryEngine(ABC):
 
 
 class QueryEngine(BaseQueryEngine):
-    def __init__(self, query: str, searchEngine: QueryEngineService):
-        super().__init__(query)
+    def __init__(self, query_text: str, searchEngine: QueryEngineService):
+        super().__init__(query_text)
         self.searchEngine = searchEngine
 
     def query(self) -> str:
@@ -36,6 +36,6 @@ class QueryEngine(BaseQueryEngine):
         :return: The search query string.
         """
 
-        results = self.searchEngine.execute_query(self.query)
+        results = self.searchEngine.execute_query(self.query_text)
 
         return results
