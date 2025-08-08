@@ -19,3 +19,13 @@ class PDFParserService(ABC):
         Should be implemented by subclasses.
         """
         pass
+
+
+class QueryEngineService(ABC):
+    @abstractmethod
+    def execute_query(self, query: str, search_engine: str):
+        """
+        Abstract method to execute a query against a search engine.
+        Should be implemented by subclasses.
+        """
+        pass

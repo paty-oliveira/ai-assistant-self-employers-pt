@@ -23,7 +23,7 @@ if __name__ == "__main__":
     pdf_parser = PDFParser(file_paths=pdf_files, parser_service=llama_service, result_type="text")
     documents = pdf_parser.parse()
 
-    index_name = "example_index"
-    index_service = Indexer(index_name=index_name, index_service=llama_service)
+    # index_name = "example_index"
+    # index_service = Indexer(index_name=index_name, index_service=llama_service)
 
-    index_service.index(documents)
+    # index_service.index(documents)

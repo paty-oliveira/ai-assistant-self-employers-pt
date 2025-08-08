@@ -1,8 +1,7 @@
-from llama_index.core import SimpleDirectoryReader
-from llama_index.core.schema import Document
-from llama_index.indices.managed.llama_cloud import LlamaCloudIndex
-from llama_parse import LlamaParse
-
+from llama_cloud_services.parse.types import Document
+from llama_cloud_services import LlamaCloudIndex
+from llama_cloud_services import LlamaParse
+from llama_index.core.readers.file.base import SimpleDirectoryReader
 from service import IndexService, PDFParserService
 
 
