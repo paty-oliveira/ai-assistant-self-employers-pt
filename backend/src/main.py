@@ -21,9 +21,11 @@ if __name__ == "__main__":
     ]
 
     pdf_parser = PDFParser(file_paths=pdf_files, parser_service=llama_service, result_type="text")
-    documents = pdf_parser.parse()
+    documents_payload = pdf_parser.parse()
 
-    # index_name = "example_index"
-    # index_service = Indexer(index_name=index_name, index_service=llama_service)
+    index_name = "example_index"
+    index_service = Indexer(index_name=index_name, index_service=llama_service)
 
-    # index_service.index(documents)
+    for document in documents_payload:
+        index_service.index(document["file_content"])
+        print(f"Indexed document: {document["file_name"]} in index: {index_name}")

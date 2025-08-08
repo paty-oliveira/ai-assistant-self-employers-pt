@@ -12,14 +12,16 @@ def test_init_sets_api_key_and_model():
 
 
 @patch("src.llama_cloud_service.LlamaParse")
-@patch("src.llama_cloud_service.SimpleDirectoryReader")
-def test_parse_calls_llama_parse_and_simple_directory_reader(mock_reader, mock_llama_parse):
+def test_parse_calls_llama_parse_and_simple_directory_reader(mock_llama_parse):
     # Arrange
+    mock_document = MagicMock()
+    mock_document.job_id = "job123"
+    mock_document.file_name = "file1.pdf"
+    mock_document.get_text_documents.return_value = ["page1 text", "page2 text"]
+
     mock_llama_instance = MagicMock()
+    mock_llama_instance.parse.return_value = [mock_document]
     mock_llama_parse.return_value = mock_llama_instance
-    mock_reader_instance = MagicMock()
-    mock_reader.return_value = mock_reader_instance
-    mock_reader_instance.load_data.return_value = ["doc1", "doc2"]
 
     service = LlmaCloudService("api-key", llm_model="llama-model")
     files = ["file1.pdf"]
@@ -30,9 +32,8 @@ def test_parse_calls_llama_parse_and_simple_directory_reader(mock_reader, mock_l
 
     # Assert
     mock_llama_parse.assert_called_once_with(api_key="api-key", model="llama-model", result_type=result_type)
-    mock_reader.assert_called_once_with(input_files=files, file_extractor={".pdf": mock_llama_instance})
-    mock_reader_instance.load_data.assert_called_once()
-    assert result == ["doc1", "doc2"]
+    mock_llama_instance.parse.assert_called_once_with(files)
+    assert result == [{"job_id": "job123", "file_name": "file1.pdf", "file_content": ["page1 text", "page2 text"]}]
 
 
 @patch("src.llama_cloud_service.LlamaCloudIndex")
