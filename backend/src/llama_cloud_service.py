@@ -1,10 +1,10 @@
 from llama_cloud_services import LlamaCloudIndex, LlamaParse
 from llama_cloud_services.parse.types import Document
 
-from service import IndexService, PDFParserService
+from service import IndexService, PDFParserService, QueryEngineService
 
 
-class LlmaCloudService(IndexService, PDFParserService):
+class LlmaCloudService(IndexService, PDFParserService, QueryEngineService):
 
     def __init__(self, api_key: str, llm_model="openai-gpt-4-1-mini"):
         """
@@ -12,6 +12,20 @@ class LlmaCloudService(IndexService, PDFParserService):
         """
         self.api_key = api_key
         self.llm_model = llm_model
+        self._indexes = {}
+
+    def _get_or_create_index(self, index_name: str) -> LlamaCloudIndex:
+        """
+        Creates an index with the given name.
+        """
+
+        if index_name in self._indexes:
+            return self._indexes[index_name]
+
+        index = LlamaCloudIndex(api_key=self.api_key, name=index_name, verbose=True)
+        self._indexes[index_name] = index
+
+        return index
 
     def parse_pdf(self, files: list[str], result_type: str) -> list[dict]:
         """
@@ -32,18 +46,30 @@ class LlmaCloudService(IndexService, PDFParserService):
 
         return content
 
-    def index_documents(self, index_name, documents: list[Document]) -> None:
+    def index_documents(self, index_name: str, documents: list[Document]) -> None:
         """
         Indexes the documents in the default vector database provided by
         IlamaCloud.
         """
 
         try:
-            print(f"Creating index {index_name} with {len(documents)} documents...")
-            index = LlamaCloudIndex.from_documents(
-                api_key=self.api_key, documents=documents, name=index_name, verbose=True
-            )
+            index = self._get_or_create_index(index_name)
+            index.from_documents(documents, name=index_name)
 
-            print(f"Index {index_name} with id {index.pipeline.id} created successfully.")
+            print(f"Documents loaded on {index_name} with id {self.index.pipeline.id} successfully.")
         except Exception as e:
-            print(f"Error creating index {index_name}: {e}")
+            print(f"Error loading documents on index {index_name}: {e}")
+
+    def execute_query(self, query: str, index_name: str) -> str:
+        """
+        Executes a query against the specified index.
+        """
+        try:
+            index = self._get_or_create_index(index_name)
+            query_engine = index.as_query_engine()
+            response = query_engine.query(query)
+            return str(response) if response else "No response from query engine."
+
+        except Exception as e:
+            print(f"Error executing query on index {index_name}: {e}")
+            return f"Index {index_name} not found or error occurred: {e}"

@@ -25,9 +25,10 @@ class BaseQueryEngine(ABC):
 
 
 class QueryEngine(BaseQueryEngine):
-    def __init__(self, query_text: str, searchEngine: QueryEngineService):
+    def __init__(self, query_text: str, search_engine: QueryEngineService, index_name: str):
         super().__init__(query_text)
-        self.searchEngine = searchEngine
+        self.search_engine = search_engine
+        self.index_name = index_name
 
     def query(self) -> str:
         """
@@ -36,6 +37,6 @@ class QueryEngine(BaseQueryEngine):
         :return: The search query string.
         """
 
-        results = self.searchEngine.execute_query(self.query_text)
+        results = self.search_engine.execute_query(self.query_text, self.index_name)
 
         return results
