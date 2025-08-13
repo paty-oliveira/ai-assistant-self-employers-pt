@@ -5,7 +5,6 @@ from service import IndexService, PDFParserService, QueryEngineService
 
 
 class LlmaCloudService(IndexService, PDFParserService, QueryEngineService):
-
     def __init__(self, api_key: str, llm_model="openai-gpt-4-1-mini"):
         """
         Initializes the LlamaParse service with the provided API key.
