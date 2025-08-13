@@ -44,17 +44,15 @@ def test_index_documents_creates_index_successfully(mock_llama_index):
     mock_index_instance.pipeline.id = "index-id"
 
     service = LlmaCloudService("api-key")
-    documents = ["doc1", "doc2"]
     index_name = "test-index"
+    documents = ["doc1", "doc2"]
 
     # Act
     service.index_documents(index_name, documents)
 
     # Assert
     mock_llama_index.assert_called_once_with(api_key="api-key", name=index_name, verbose=True)
-
-    mock_index_instance.from_documents.assert_called_once_with(documents=documents, name=index_name)
-
+    mock_index_instance.from_documents.assert_called_once_with(documents, name=index_name)
     assert mock_index_instance.pipeline.id == "index-id"
 
 
@@ -69,11 +67,12 @@ def test_execute_query_calls_query_engine(mock_llama_index):
 
     # Act
     service = LlmaCloudService("api-key")
-    service.index = mock_index_instance
+    index_name = "test-index"
     query = "What is the capital of France?"
-    result = service.execute_query(query)
+    result = service.execute_query(query, index_name)
 
     # Assert
+    mock_llama_index.assert_called_once_with(api_key="api-key", name=index_name, verbose=True)
     mock_index_instance.as_query_engine.assert_called_once()
     mock_query_engine.query.assert_called_once_with(query)
     assert result == "The capital of France is Paris."

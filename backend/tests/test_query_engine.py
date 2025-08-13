@@ -9,11 +9,12 @@ def test_query_engine_external_service_call(mocker):
     mock_service.execute_query.return_value = "query result"
 
     query = "Example of query"
-    query_engine = QueryEngine(query, mock_service)
+    index_name = "test_index"
+    query_engine = QueryEngine(query, mock_service, index_name)
 
     # Act
     result = query_engine.query()
 
     # Assert
-    mock_service.execute_query.assert_called_once_with(query)
+    mock_service.execute_query.assert_called_once_with(query, index_name)
     assert result == "query result"
