@@ -12,6 +12,8 @@ dependencies = [
     "pydantic (>=2.11.7,<3.0.0)",
     "llama-cloud-services (>=0.6.56,<0.7.0)",
     "llama-index-llms-openai (>=0.5.2,<0.6.0)",
+    "uvicorn (>=0.35.0,<0.36.0)",
+    "fastapi[standard] (>=0.116.1,<0.117.0)",
 ]
 
 [tool.poetry]
