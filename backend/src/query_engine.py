@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from service import QueryEngineService
+from .service import QueryEngineService
 
 
 class BaseQueryEngine(ABC):

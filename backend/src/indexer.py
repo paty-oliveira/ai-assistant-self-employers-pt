@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from service import IndexService
+from .service import IndexService
 
 
 class BaseIndexer(ABC):

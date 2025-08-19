@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from service import PDFParserService
+from .service import PDFParserService
 
 
 class BaseParser(ABC):

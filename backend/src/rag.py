@@ -1,7 +1,6 @@
-from parser import PDFParser
-
-from indexer import Indexer
-from query_engine import QueryEngine
+from .indexer import Indexer
+from .parser import PDFParser
+from .query_engine import QueryEngine
 
 
 def parsing_and_indexing_documents(pdf_files, index_name, external_service):

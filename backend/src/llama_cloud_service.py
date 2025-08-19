@@ -1,7 +1,7 @@
 from llama_cloud_services import LlamaCloudIndex, LlamaParse
 from llama_cloud_services.parse.types import Document
 
-from service import IndexService, PDFParserService, QueryEngineService
+from .service import IndexService, PDFParserService, QueryEngineService
 
 
 class LlmaCloudService(IndexService, PDFParserService, QueryEngineService):
