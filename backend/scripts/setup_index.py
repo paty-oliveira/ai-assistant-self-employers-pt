@@ -5,6 +5,7 @@
 # 4. Update state file
 # 5. Exit with success/failure code
 
+import json
 import os
 
 from dotenv import load_dotenv
@@ -25,9 +26,18 @@ def main():
     indexing_state_file = os.path.abspath("indexing_state.json")
 
     if not os.path.exists(indexing_state_file):
-        print("Indexing state file does not exist. Creating a new one.")
+        initial_state = {
+            "version": "1.0",
+            "last_updated": None,
+            "metadata": {
+                "total_files": 0,
+                "index_location": "Llama Cloud",
+                "processing_stats": {"total_processed": 0, "successful": 0, "failed": 0, "last_run_duration": None},
+            },
+            "files": {},
+        }
         with open(indexing_state_file, "w") as f:
-            f.write("{}")
+            json.dump(initial_state, f, indent=4)
 
     # Check the current state of indexing
 
