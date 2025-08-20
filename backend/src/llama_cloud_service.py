@@ -18,10 +18,10 @@ class LlmaCloudService(IndexService, PDFParserService, QueryEngineService):
         Creates an index with the given name.
         """
 
-        if index_name in self._indexes:
+        if index_name in self._indexes and self._indexes[index_name] is not None:
             return self._indexes[index_name]
 
-        index = LlamaCloudIndex(api_key=self.api_key, name=index_name, verbose=True)
+        index = LlamaCloudIndex.create_index(api_key=self.api_key, name=index_name, verbose=True)
         self._indexes[index_name] = index
 
         return index

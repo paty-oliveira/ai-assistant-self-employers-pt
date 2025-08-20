@@ -17,9 +17,12 @@ def parsing_and_indexing_documents(pdf_files, index_name, external_service):
 
     index_service = Indexer(index_name=index_name, index_service=external_service)
 
-    for document in documents_payload:
-        index_service.index(document["file_content"])
-        print(f"Indexed document: {document['file_name']} in index: {index_name}")
+    try:
+        for document in documents_payload:
+            index_service.index(document["file_content"])
+            print(f"Indexed document: {document['file_name']} in index: {index_name}")
+    except Exception as e:
+        print(f"Error indexing documents: {e}")
 
 
 def query_documents(query_text, index_name, external_service):

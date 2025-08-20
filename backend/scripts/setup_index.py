@@ -5,6 +5,8 @@
 # 4. Update state file
 # 5. Exit with success/failure code
 
+import datetime
+import hashlib
 import json
 import os
 
@@ -16,13 +18,22 @@ from src.rag import parsing_and_indexing_documents
 LLAMA_CLOUD_API = os.getenv("LLAMA_CLOUD_API_KEY")
 
 
-def main():
-    load_dotenv()
-    pdf_files = [
-        os.path.abspath("pdfs/novo_regime.pdf"),
-        os.path.abspath("pdfs/perguntas_frequentes.pdf"),
-    ]
+def calculate_file_hash(file_path):
+    """Calculate SHA-256 hash of a file."""
+    hash_sha256 = hashlib.sha256()
+    try:
+        with open(file_path, "rb") as f:
+            # Read file in chunks to handle large files efficiently
+            for chunk in iter(lambda: f.read(4096), b""):
+                hash_sha256.update(chunk)
+        return hash_sha256.hexdigest()
+    except IOError as e:
+        print(f"Error reading file {file_path}: {e}")
+        return None
 
+
+def main():
+    external_service = LlmaCloudService(LLAMA_CLOUD_API)
     indexing_state_file = os.path.abspath("indexing_state.json")
 
     if not os.path.exists(indexing_state_file):
@@ -32,14 +43,77 @@ def main():
             "metadata": {
                 "total_files": 0,
                 "index_location": "Llama Cloud",
-                "processing_stats": {"total_processed": 0, "successful": 0, "failed": 0, "last_run_duration": None},
+                "processing_stats": {"total_processed": 0, "successful": 0, "failed": 0},
             },
             "files": {},
         }
         with open(indexing_state_file, "w") as f:
             json.dump(initial_state, f, indent=4)
 
-    # Check the current state of indexing
+    with open(indexing_state_file, "r") as f:
+        indexing_state = json.load(f)
+
+        files_preprocessed = indexing_state.get("files")
+        if not files_preprocessed:
+            pdf_files = [file for file in os.listdir("pdfs") if file.endswith(".pdf")]
+            indexing_state["files"] = {}
+
+            for pdf_file in pdf_files:
+                file_path = os.path.join("pdfs", pdf_file)
+                file_name = os.path.splitext(os.path.basename(file_path))[0]
+                file_hash = calculate_file_hash(file_path)
+                if file_hash:
+                    file_size = os.path.getsize(file_path)
+                    indexing_state["files"][file_name] = {
+                        "hash": file_hash,
+                        "size": file_size,
+                        "last_indexed": None,
+                        "status": "pending",
+                        "metadata": {
+                            "title": file_name,
+                            "author": None,
+                            "creation_date": None,
+                        },
+                    }
+
+            with open(indexing_state_file, "w") as f:
+                json.dump(indexing_state, f, indent=4)
+
+        else:
+            for file_name, file_info in files_preprocessed.items():
+                file_path = os.path.join("pdfs", f"{file_name}.pdf")
+                current_hash = calculate_file_hash(file_path)
+                if current_hash != file_info["hash"]:
+                    print(f"File {file_name} has changed. Re-indexing...")
+                    file_info["hash"] = current_hash
+                    file_info["last_indexed"] = datetime.datetime.now().isoformat()
+                    file_info["status"] = "pending"
+                else:
+                    print(f"File {file_name} has not changed. Skipping...")
+
+    with open(indexing_state_file, "r") as f:
+        current_indexing_state = json.load(f)
+        files = current_indexing_state.get("files", {})
+        for file_name, file_info in files.items():
+            if file_info["status"] == "pending":
+                file_path = os.path.join("pdfs", f"{file_name}.pdf")
+                try:
+                    # Breaking here. TBD: Fix it!
+                    # Error loading documents on index self_employeer_index: 'LlmaCloudService' object has no attribute 'index'
+                    parsing_and_indexing_documents(
+                        pdf_files=[file_path], index_name="self_employeer_index", external_service=external_service
+                    )
+                    file_info["status"] = "indexed"
+                    file_info["last_indexed"] = datetime.datetime.now().isoformat()
+                    current_indexing_state["metadata"]["processing_stats"]["total_processed"] += 1
+                    current_indexing_state["metadata"]["processing_stats"]["successful"] += 1
+                except Exception as e:
+                    print(f"Failed to index {file_name}: {e}")
+                    file_info["status"] = "failed"
+                    current_indexing_state["metadata"]["processing_stats"]["failed"] += 1
+                finally:
+                    current_indexing_state["last_updated"] = datetime.datetime.now().isoformat()
 
 
+load_dotenv()
 main()
