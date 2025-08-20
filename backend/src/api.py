@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from .llama_cloud_service import LlmaCloudService
+from .llama_cloud_service import LlamaCloudService
 from .rag import query_documents
 
 load_dotenv()
@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
         api_key = os.getenv("LLAMA_CLOUD_API_KEY")
         if not api_key:
             raise ValueError("LLAMA_CLOUD_API_KEY environment variable is not set.")
-        external_service = LlmaCloudService(api_key=api_key)
+        external_service = LlamaCloudService(api_key=api_key)
 
         # This yield is what makes it an async generator
         yield

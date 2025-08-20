@@ -1,10 +1,3 @@
-# setup_index.py workflow:
-# 1. Check if .indexing_state.json exists
-# 2. Compare PDF hashes with previous state
-# 3. Only process changed/new PDFs
-# 4. Update state file
-# 5. Exit with success/failure code
-
 import datetime
 import hashlib
 import json
@@ -12,7 +5,7 @@ import os
 
 from dotenv import load_dotenv
 
-from src.llama_cloud_service import LlmaCloudService
+from src.llama_cloud_service import LlamaCloudService
 from src.rag import parsing_and_indexing_documents
 
 LLAMA_CLOUD_API = os.getenv("LLAMA_CLOUD_API_KEY")
@@ -33,7 +26,7 @@ def calculate_file_hash(file_path):
 
 
 def main():
-    external_service = LlmaCloudService(LLAMA_CLOUD_API)
+    external_service = LlamaCloudService(LLAMA_CLOUD_API)
     indexing_state_file = os.path.abspath("indexing_state.json")
 
     if not os.path.exists(indexing_state_file):
@@ -55,6 +48,7 @@ def main():
 
         files_preprocessed = indexing_state.get("files")
         if not files_preprocessed:
+            print("No files preprocessed. Initializing indexing state...")
             pdf_files = [file for file in os.listdir("pdfs") if file.endswith(".pdf")]
             indexing_state["files"] = {}
 
@@ -98,13 +92,12 @@ def main():
             if file_info["status"] == "pending":
                 file_path = os.path.join("pdfs", f"{file_name}.pdf")
                 try:
-                    # Breaking here. TBD: Fix it!
-                    # Error loading documents on index self_employeer_index: 'LlmaCloudService' object has no attribute 'index'
                     parsing_and_indexing_documents(
                         pdf_files=[file_path], index_name="self_employeer_index", external_service=external_service
                     )
                     file_info["status"] = "indexed"
                     file_info["last_indexed"] = datetime.datetime.now().isoformat()
+                    current_indexing_state["metadata"]["total_files"] += 1
                     current_indexing_state["metadata"]["processing_stats"]["total_processed"] += 1
                     current_indexing_state["metadata"]["processing_stats"]["successful"] += 1
                 except Exception as e:
@@ -113,6 +106,8 @@ def main():
                     current_indexing_state["metadata"]["processing_stats"]["failed"] += 1
                 finally:
                     current_indexing_state["last_updated"] = datetime.datetime.now().isoformat()
+        with open(indexing_state_file, "w") as f:
+            json.dump(current_indexing_state, f, indent=4)
 
 
 load_dotenv()

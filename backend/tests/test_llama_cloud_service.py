@@ -2,11 +2,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.llama_cloud_service import LlmaCloudService
+from src.llama_cloud_service import LlamaCloudService
 
 
 def test_init_sets_api_key_and_model():
-    service = LlmaCloudService("test-key", llm_model="test-model")
+    service = LlamaCloudService("test-key", llm_model="test-model")
     assert service.api_key == "test-key"
     assert service.llm_model == "test-model"
 
@@ -23,7 +23,7 @@ def test_parse_calls_llama_parse_and_simple_directory_reader(mock_llama_parse):
     mock_llama_instance.parse.return_value = [mock_document]
     mock_llama_parse.return_value = mock_llama_instance
 
-    service = LlmaCloudService("api-key", llm_model="llama-model")
+    service = LlamaCloudService("api-key", llm_model="llama-model")
     files = ["file1.pdf"]
     result_type = "text"
 
@@ -43,7 +43,7 @@ def test_index_documents_creates_index_successfully(mock_llama_index):
     mock_llama_index.return_value = mock_index_instance
     mock_index_instance.pipeline.id = "index-id"
 
-    service = LlmaCloudService("api-key")
+    service = LlamaCloudService("api-key")
     index_name = "test-index"
     documents = ["doc1", "doc2"]
 
@@ -66,7 +66,7 @@ def test_execute_query_calls_query_engine(mock_llama_index):
     mock_query_engine.query.return_value = "The capital of France is Paris."
 
     # Act
-    service = LlmaCloudService("api-key")
+    service = LlamaCloudService("api-key")
     index_name = "test-index"
     query = "What is the capital of France?"
     result = service.execute_query(query, index_name)
