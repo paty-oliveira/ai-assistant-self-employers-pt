@@ -11,7 +11,7 @@ class BaseIndexer(ABC):
         self.index_name = index_name
 
     @abstractmethod
-    def index(self, documents):
+    def index(self, documents: list):
         """
         Abstract method to index documents.
         Should be implemented by subclasses.
@@ -24,7 +24,7 @@ class Indexer(BaseIndexer):
         super().__init__(index_name)
         self.index_service = index_service
 
-    def index(self, documents):
+    def index(self, documents: list):
         """
         Indexes the provided documents using the specified index service.
         """

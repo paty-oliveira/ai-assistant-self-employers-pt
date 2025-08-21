@@ -7,7 +7,7 @@ from .query_engine import QueryEngine
 logger = logging.getLogger(__name__)
 
 
-def parsing_and_indexing_documents(pdf_files, index_name, external_service):
+def parsing_and_indexing_documents(pdf_files: list[str], index_name: str, external_service):
     """
     Parses PDF documents and indexes their content using the provided external service.
     Args:
@@ -29,7 +29,7 @@ def parsing_and_indexing_documents(pdf_files, index_name, external_service):
         logger.error(f"Error indexing documents: {e}")
 
 
-def query_documents(query_text, index_name, external_service):
+def query_documents(query_text: str, index_name: str, external_service):
     """
     Queries the indexed documents using the provided query text.
     Args:

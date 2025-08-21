@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -8,8 +9,6 @@ from pydantic import BaseModel
 
 from .llama_cloud_service import LlamaCloudService
 from .rag import query_documents
-
-load_dotenv()
 
 
 class QueryRequest(BaseModel):
@@ -25,8 +24,7 @@ class QueryResponse(BaseModel):
 
 
 external_service = None
-
-from contextlib import asynccontextmanager
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -44,7 +42,7 @@ async def lifespan(app: FastAPI):
         yield
 
     except Exception as e:
-        print(f"Startup error: {e}")
+        logger.error(f"Error during startup: {e}")
         raise
     finally:
         # Cleanup code
@@ -65,7 +63,7 @@ async def root():
 
 
 @app.get("/query")
-async def query(request: QueryRequest):
+async def query(request: QueryRequest) -> QueryResponse:
     try:
         if not external_service:
             raise HTTPException(status_code=503, detail="Service not available")
@@ -83,4 +81,5 @@ async def query(request: QueryRequest):
 
 
 if __name__ == "__main__":
+    load_dotenv()
     uvicorn.run(app, host="0.0.0.0", port=8000)

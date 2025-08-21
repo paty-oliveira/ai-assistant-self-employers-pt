@@ -14,7 +14,7 @@ LLAMA_CLOUD_API = os.getenv("LLAMA_CLOUD_API_KEY")
 logger = logging.getLogger(__name__)
 
 
-def calculate_file_hash(file_path):
+def calculate_file_hash(file_path: str) -> str:
     """Calculate SHA-256 hash of a file."""
     hash_sha256 = hashlib.sha256()
     try:
