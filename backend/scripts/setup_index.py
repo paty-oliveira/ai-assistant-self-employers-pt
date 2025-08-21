@@ -30,7 +30,9 @@ def calculate_file_hash(file_path: str) -> str:
 def main():
     """Main function to set up indexing for PDF files."""
     if not LLAMA_CLOUD_API:
-        logger.error("Llama Cloud API key is not set. Please set the LLAMA_CLOUD_API_KEY environment variable.")
+        logger.error(
+            "Llama Cloud API key is not set. Please set the LLAMA_CLOUD_API_KEY environment variable."
+        )
 
     external_service = LlamaCloudService(LLAMA_CLOUD_API)
     indexing_state_file = os.path.abspath("indexing_state.json")
@@ -99,7 +101,9 @@ def main():
                 file_path = os.path.join("pdfs", f"{file_name}.pdf")
                 try:
                     parsing_and_indexing_documents(
-                        pdf_files=[file_path], index_name="self_employeer_index", external_service=external_service
+                        pdf_files=[file_path],
+                        index_name="self_employeer_index",
+                        external_service=external_service,
                     )
                     file_info["status"] = "indexed"
                     file_info["last_indexed"] = datetime.datetime.now().isoformat()

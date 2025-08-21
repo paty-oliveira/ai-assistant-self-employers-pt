@@ -69,11 +69,16 @@ async def query(request: QueryRequest) -> QueryResponse:
             raise HTTPException(status_code=503, detail="Service not available")
 
         response = query_documents(
-            query_text=request.query, index_name=request.index_name, external_service=external_service
+            query_text=request.query,
+            index_name=request.index_name,
+            external_service=external_service,
         )
 
         return QueryResponse(
-            response=response, query=request.query, index_used=request.index_name, service_used="Llama Cloud Service"
+            response=response,
+            query=request.query,
+            index_used=request.index_name,
+            service_used="Llama Cloud Service",
         )
 
     except Exception as e:

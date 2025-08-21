@@ -30,7 +30,9 @@ class LlamaCloudService(IndexService, PDFParserService, QueryEngineService):
 
         try:
             self._logger.info(f"Creating new index: {index_name}")
-            index = LlamaCloudIndex.create_index(api_key=self.api_key, name=index_name, verbose=True)
+            index = LlamaCloudIndex.create_index(
+                api_key=self.api_key, name=index_name, verbose=True
+            )
             self._indexes[index_name] = index
             return index
         except Exception as e:
@@ -44,7 +46,9 @@ class LlamaCloudService(IndexService, PDFParserService, QueryEngineService):
             raise ValueError("Files list cannot be empty")
 
         try:
-            llama_parser = LlamaParse(api_key=self.api_key, model=self.llm_model, result_type=result_type)
+            llama_parser = LlamaParse(
+                api_key=self.api_key, model=self.llm_model, result_type=result_type
+            )
 
             self._logger.info(f"Parsing {len(files)} files")
             results = llama_parser.parse(files)
@@ -55,10 +59,16 @@ class LlamaCloudService(IndexService, PDFParserService, QueryEngineService):
                 text_documents = document.get_text_documents(split_by_page=True)
 
                 content.append(
-                    {"job_id": document.job_id, "file_name": document.file_name, "file_content": text_documents}
+                    {
+                        "job_id": document.job_id,
+                        "file_name": document.file_name,
+                        "file_content": text_documents,
+                    }
                 )
 
-                self._logger.info(f"Parsed {len(text_documents)} documents from {document.file_name}")
+                self._logger.info(
+                    f"Parsed {len(text_documents)} documents from {document.file_name}"
+                )
 
             return content
         except Exception as e:
