@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 import json
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -10,22 +11,27 @@ from src.rag import parsing_and_indexing_documents
 
 LLAMA_CLOUD_API = os.getenv("LLAMA_CLOUD_API_KEY")
 
+logger = logging.getLogger(__name__)
+
 
 def calculate_file_hash(file_path):
     """Calculate SHA-256 hash of a file."""
     hash_sha256 = hashlib.sha256()
     try:
         with open(file_path, "rb") as f:
-            # Read file in chunks to handle large files efficiently
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_sha256.update(chunk)
         return hash_sha256.hexdigest()
     except IOError as e:
-        print(f"Error reading file {file_path}: {e}")
+        logger.error(f"Error reading file {file_path}: {e}")
         return None
 
 
 def main():
+    """Main function to set up indexing for PDF files."""
+    if not LLAMA_CLOUD_API:
+        logger.error("Llama Cloud API key is not set. Please set the LLAMA_CLOUD_API_KEY environment variable.")
+
     external_service = LlamaCloudService(LLAMA_CLOUD_API)
     indexing_state_file = os.path.abspath("indexing_state.json")
 
@@ -48,7 +54,7 @@ def main():
 
         files_preprocessed = indexing_state.get("files")
         if not files_preprocessed:
-            print("No files preprocessed. Initializing indexing state...")
+            logger.info("No files preprocessed. Initializing indexing state...")
             pdf_files = [file for file in os.listdir("pdfs") if file.endswith(".pdf")]
             indexing_state["files"] = {}
 
@@ -78,12 +84,12 @@ def main():
                 file_path = os.path.join("pdfs", f"{file_name}.pdf")
                 current_hash = calculate_file_hash(file_path)
                 if current_hash != file_info["hash"]:
-                    print(f"File {file_name} has changed. Re-indexing...")
+                    logger.info(f"File {file_name} has changed. Re-indexing...")
                     file_info["hash"] = current_hash
                     file_info["last_indexed"] = datetime.datetime.now().isoformat()
                     file_info["status"] = "pending"
                 else:
-                    print(f"File {file_name} has not changed. Skipping...")
+                    logger.info(f"File {file_name} has not changed. Skipping...")
 
     with open(indexing_state_file, "r") as f:
         current_indexing_state = json.load(f)
@@ -101,7 +107,7 @@ def main():
                     current_indexing_state["metadata"]["processing_stats"]["total_processed"] += 1
                     current_indexing_state["metadata"]["processing_stats"]["successful"] += 1
                 except Exception as e:
-                    print(f"Failed to index {file_name}: {e}")
+                    logger.error(f"Failed to index {file_name}: {e}")
                     file_info["status"] = "failed"
                     current_indexing_state["metadata"]["processing_stats"]["failed"] += 1
                 finally:

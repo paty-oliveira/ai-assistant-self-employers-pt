@@ -82,8 +82,7 @@ class LlamaCloudService(IndexService, PDFParserService, QueryEngineService):
             )
 
         except Exception as e:
-            error_msg = f"Error loading documents to index '{index_name}': {e}"
-            self._logger.error(error_msg)
+            self._logger.error(f"Error loading documents to index '{index_name}': {e}")
 
     def execute_query(self, query: str, index_name: str) -> str:
         """
