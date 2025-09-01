@@ -4,6 +4,7 @@ from .indexer import Indexer
 from .parser import PDFParser
 from .query_engine import QueryEngine
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

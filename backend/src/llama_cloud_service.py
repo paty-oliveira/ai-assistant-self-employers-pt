@@ -6,6 +6,8 @@ from llama_cloud_services.parse.types import Document
 
 from .service import IndexService, PDFParserService, QueryEngineService
 
+logging.basicConfig(level=logging.INFO)
+
 
 class LlamaCloudService(IndexService, PDFParserService, QueryEngineService):
     def __init__(self, api_key: str, llm_model="openai-gpt-4-1-mini"):
