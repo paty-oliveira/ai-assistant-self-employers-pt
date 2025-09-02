@@ -48,7 +48,7 @@ def test_parse_calls_llama_parse_and_simple_directory_reader(mock_llama_parse):
 def test_index_documents_creates_index_successfully(mock_llama_index):
     # Arrange
     mock_index_instance = MagicMock()
-    mock_llama_index.create_index.return_value = mock_index_instance
+    mock_llama_index.return_value = mock_index_instance
 
     service = LlamaCloudService("api-key")
     index_name = "test-index"
@@ -58,17 +58,15 @@ def test_index_documents_creates_index_successfully(mock_llama_index):
     service.index_documents(index_name, documents)
 
     # Assert
-    mock_llama_index.create_index.assert_called_once_with(
-        api_key="api-key", name=index_name, verbose=True
-    )
-    mock_index_instance.from_documents.assert_called_once_with(documents, name=index_name)
+
+    mock_index_instance.from_documents.assert_called_once_with(documents=documents, name=index_name)
 
 
 @patch("src.llama_cloud_service.LlamaCloudIndex")
 def test_execute_query_calls_query_engine(mock_llama_index):
     # Arrange
     mock_index_instance = MagicMock()
-    mock_llama_index.create_index.return_value = mock_index_instance
+    mock_llama_index.return_value = mock_index_instance
     mock_query_engine = MagicMock()
     mock_index_instance.as_query_engine.return_value = mock_query_engine
     mock_query_engine.query.return_value = "The capital of France is Paris."
@@ -80,9 +78,6 @@ def test_execute_query_calls_query_engine(mock_llama_index):
     result = service.execute_query(query, index_name)
 
     # Assert
-    mock_llama_index.create_index.assert_called_once_with(
-        api_key="api-key", name=index_name, verbose=True
-    )
     mock_index_instance.as_query_engine.assert_called_once()
     mock_query_engine.query.assert_called_once_with(query)
     assert result == "The capital of France is Paris."

@@ -39,6 +39,7 @@ def create_indexing_state_file(state_file: str):
             "index_location": "Llama Cloud",
             "processing_stats": {"total_processed": 0, "successful": 0, "failed": 0},
         },
+        "index_name": None,
         "files": {},
     }
     with open(state_file, "w") as f:
@@ -84,7 +85,7 @@ def get_indexing_state(current_state: dict, folder_path: str):
     return current_state
 
 
-def update_indexing_state(current_state: dict, external_service):
+def update_indexing_state(current_state: dict, external_service, index_name):
     files = current_state.get("files", {})
     for file_name, file_info in files.items():
         if file_info["status"] == "pending":
@@ -92,11 +93,12 @@ def update_indexing_state(current_state: dict, external_service):
             try:
                 parsing_and_indexing_documents(
                     pdf_files=[file_path],
-                    index_name="self_employeer_index",
+                    index_name=index_name,
                     external_service=external_service,
                 )
                 file_info["status"] = "indexed"
                 file_info["last_indexed"] = datetime.datetime.now().isoformat()
+                current_state["index_name"] = index_name
                 current_state["metadata"]["total_files"] += 1
                 current_state["metadata"]["processing_stats"]["total_processed"] += 1
                 current_state["metadata"]["processing_stats"]["successful"] += 1
@@ -128,7 +130,9 @@ def main():
 
     current_state = get_indexing_state(index_content, "pdfs")
 
-    updated_state = update_indexing_state(current_state, external_service)
+    updated_state = update_indexing_state(
+        current_state, external_service, index_name="rag_index_test"
+    )
 
     with open(indexing_state_file, "w") as f:
         json.dump(updated_state, f, indent=4)

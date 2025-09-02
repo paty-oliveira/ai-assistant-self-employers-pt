@@ -16,29 +16,7 @@ class LlamaCloudService(IndexService, PDFParserService, QueryEngineService):
         """
         self.api_key = api_key
         self.llm_model = llm_model
-        self._indexes: Dict[str, LlamaCloudIndex] = {}
         self._logger = logging.getLogger(__name__)
-
-    def _get_or_create_index(self, index_name: str) -> LlamaCloudIndex:
-        """
-        Gets an existing index or creates a new one with the given name.
-        """
-        if not index_name:
-            raise ValueError("Index name cannot be empty")
-
-        if index_name in self._indexes and self._indexes[index_name] is not None:
-            self._logger.info(f"Using existing index: {index_name}")
-            return self._indexes[index_name]
-
-        try:
-            self._logger.info(f"Creating new index: {index_name}")
-            index = LlamaCloudIndex.create_index(
-                api_key=self.api_key, name=index_name, verbose=True
-            )
-            self._indexes[index_name] = index
-            return index
-        except Exception as e:
-            self._logger.error(f"Failed to create index {index_name}: {e}")
 
     def parse_pdf(self, files: list[str], result_type: str) -> list[dict]:
         """
@@ -78,21 +56,25 @@ class LlamaCloudService(IndexService, PDFParserService, QueryEngineService):
 
     def index_documents(self, index_name: str, documents: list[Document]) -> None:
         """
-        Indexes the documents in the default vector database provided by
-        IlamaCloud.
+        Indexes the provided documents into a LlamaCloud index.
         """
         if not documents:
             raise ValueError("Documents list cannot be empty")
 
         try:
-            index = self._get_or_create_index(index_name)
-            index.from_documents(documents, name=index_name)
+            index = LlamaCloudIndex(api_key=self.api_key, name=index_name)
+            self._logger.info(f"Using existing index '{index_name}' with ID: {index.pipeline.id}")
 
+        except ValueError:
+            index = LlamaCloudIndex.create_index(api_key=self.api_key, name=index_name)
+            self._logger.info(f"Created new index '{index_name}' with ID: {index.pipeline.id}")
+
+        try:
+            index.from_documents(documents=documents, name=index_name)
             self._logger.info(
                 f"Successfully loaded {len(documents)} documents to index '{index_name}' "
                 f"with pipeline ID: {index.pipeline.id}"
             )
-
         except Exception as e:
             self._logger.error(f"Error loading documents to index '{index_name}': {e}")
 
@@ -104,7 +86,7 @@ class LlamaCloudService(IndexService, PDFParserService, QueryEngineService):
             return "Query cannot be empty"
 
         try:
-            index = self._get_or_create_index(index_name)
+            index = LlamaCloudIndex(api_key=self.api_key, name=index_name)
             query_engine = index.as_query_engine()
 
             self._logger.info(f"Executing query on index '{index_name}': {query[:50]}...")
