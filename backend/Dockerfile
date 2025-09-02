@@ -8,20 +8,14 @@ RUN apt-get update \
         curl \
         && rm -rf /var/lib/apt/lists/*
 
+COPY ./pyproject.toml ./poetry.lock /app/backend/
+
 RUN pip install poetry
 
-COPY . /app/backend
+RUN poetry config virtualenvs.create false
 
 RUN poetry install
 
-RUN useradd --create-home --shell /bin/bash app \
-    && chown -R app:app /app
+COPY . /app/backend
 
-USER app
-
-EXPOSE 8000
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/ || exit 1
-
-CMD [ "python", "-m", "src.api"]
+CMD [ "poetry", "run", "fastapi", "run", "src/api.py", "--port", "80" ]

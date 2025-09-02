@@ -2,13 +2,14 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
-import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from .llama_cloud_service import LlamaCloudService
 from .rag import query_documents
+
+load_dotenv()
 
 
 class QueryRequest(BaseModel):
@@ -83,8 +84,3 @@ async def query(request: QueryRequest) -> QueryResponse:
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
-
-
-if __name__ == "__main__":
-    load_dotenv()
-    uvicorn.run(app, host="0.0.0.0", port=8000)
