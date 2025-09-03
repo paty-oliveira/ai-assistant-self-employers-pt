@@ -42,8 +42,12 @@ jobs:
         working-directory: ./backend
         run: poetry install --no-interaction --no-ansi --no-root
 
-      - name: Run tests
+      - name: Linting and static code analysis
         working-directory: ./backend
         run: |
-          source .venv/bin/activate
-          poetry run pytest
+          poetry run black .
+          poetry run isort .
+
+      - name: Run tests
+        working-directory: ./backend
+        run: poetry run pytest
