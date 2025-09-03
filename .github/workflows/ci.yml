@@ -46,5 +46,4 @@ jobs:
         working-directory: ./backend
         run: |
           source .venv/bin/activate
-          pytest tests
-          coverage report
+          poetry run pytest
