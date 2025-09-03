@@ -4,14 +4,8 @@ import json
 import logging
 import os
 
-from dotenv import load_dotenv
-
 from src.llama_cloud_service import LlamaCloudService
 from src.rag import parsing_and_indexing_documents
-
-load_dotenv(override=True)
-
-LLAMA_CLOUD_API = os.environ.get("LLAMA_CLOUD_API_KEY")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -30,7 +24,7 @@ def calculate_file_hash(file_path: str) -> str:
         return None
 
 
-def create_indexing_state_file(state_file: str):
+def create_indexing_state_file(state_file: str) -> None:
     initial_state = {
         "version": "1.0",
         "last_updated": None,
@@ -46,7 +40,7 @@ def create_indexing_state_file(state_file: str):
         json.dump(initial_state, f, indent=4)
 
 
-def get_indexing_state(current_state: dict, folder_path: str):
+def get_indexing_state(current_state: dict, folder_path: str) -> dict:
     files_preprocessed = current_state.get("files", {})
     if not files_preprocessed:
         logger.info("No files preprocessed. Initializing indexing state...")
@@ -72,7 +66,7 @@ def get_indexing_state(current_state: dict, folder_path: str):
                 }
     else:
         for file_name, file_info in files_preprocessed.items():
-            file_path = os.path.join("pdfs", f"{file_name}.pdf")
+            file_path = os.path.join(folder_path, f"{file_name}.pdf")
             current_hash = calculate_file_hash(file_path)
             if current_hash != file_info["hash"]:
                 logger.info(f"File {file_name} has changed. Re-indexing...")
@@ -85,11 +79,13 @@ def get_indexing_state(current_state: dict, folder_path: str):
     return current_state
 
 
-def update_indexing_state(current_state: dict, external_service, index_name):
+def update_indexing_state(
+    current_state: dict, external_service, index_name, folder_path: str
+) -> dict:
     files = current_state.get("files", {})
     for file_name, file_info in files.items():
         if file_info["status"] == "pending":
-            file_path = os.path.join("pdfs", f"{file_name}.pdf")
+            file_path = os.path.join(folder_path, f"{file_name}.pdf")
             try:
                 parsing_and_indexing_documents(
                     pdf_files=[file_path],
@@ -109,29 +105,41 @@ def update_indexing_state(current_state: dict, external_service, index_name):
             finally:
                 current_state["last_updated"] = datetime.datetime.now().isoformat()
 
+        else:
+            logger.info(f"File {file_name} is already indexed. Skipping...")
+            continue
+
     return current_state
 
 
 def main():
     """Main function to set up indexing for PDF files."""
-    if not LLAMA_CLOUD_API:
+    api_key = os.environ.get("LLAMA_CLOUD_API_KEY")
+
+    if not api_key:
         logger.error(
             "Llama Cloud API key is not set. Please set the LLAMA_CLOUD_API_KEY environment variable."
         )
 
-    external_service = LlamaCloudService(LLAMA_CLOUD_API)
-    indexing_state_file = os.path.abspath("indexing_state.json")
+    filename = "indexing.json"
+    docs_folder = "pdfs"
+    index_name = "rag_index_test"
+    llama_cloud_service = LlamaCloudService(api_key=api_key)
+    indexing_state_file = os.path.abspath("state/" + filename)
 
     if not os.path.exists(indexing_state_file):
-        create_indexing_state_file(indexing_state_file)
+        create_indexing_state_file(state_file=indexing_state_file)
 
     with open(indexing_state_file, "r") as f:
         index_content = json.load(f)
 
-    current_state = get_indexing_state(index_content, "pdfs")
+    current_state = get_indexing_state(current_state=index_content, folder_path=docs_folder)
 
     updated_state = update_indexing_state(
-        current_state, external_service, index_name="rag_index_test"
+        current_state=current_state,
+        external_service=llama_cloud_service,
+        index_name=index_name,
+        folder_path=docs_folder,
     )
 
     with open(indexing_state_file, "w") as f:

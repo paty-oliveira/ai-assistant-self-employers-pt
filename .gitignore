@@ -210,4 +210,4 @@ __marimo__/
 
 .env
 
-backend/indexing_state.json
+backend/state/indexing.json

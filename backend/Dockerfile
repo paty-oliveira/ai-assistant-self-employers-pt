@@ -24,4 +24,4 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 COPY . /app/backend
 
-CMD [ "poetry", "run", "fastapi", "run", "src/api.py", "--port", "80" ]
+CMD [ "fastapi", "run", "src/api.py", "--port", "80" ]

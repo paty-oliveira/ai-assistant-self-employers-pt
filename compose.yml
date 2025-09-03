@@ -1,7 +1,7 @@
 services:
   docs_ingestion:
     build: ./backend
-    container_name: docs_ingestion
+    container_name: ingestion
     command: python -m scripts.ingest_docs
     environment:
       - LLAMA_CLOUD_API_KEY=${LLAMA_CLOUD_API_KEY}
@@ -9,9 +9,10 @@ services:
     env_file:
       - .env
     volumes:
+      - ./backend/state:/app/backend/state
       - ./backend:/app/backend
 
-  backend:
+  api:
     build: ./backend
     container_name: api
     ports:
