@@ -7,7 +7,7 @@ readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = ">=3.9,<4.0"
+python = ">=3.12,<4.0"
 python-dotenv = ">=1.1.1,<2.0.0"
 pydantic = ">=2.11.7,<3.0.0"
 llama-cloud-services = ">=0.6.56,<0.7.0"
