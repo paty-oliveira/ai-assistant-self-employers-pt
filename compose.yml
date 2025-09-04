@@ -28,3 +28,14 @@ services:
     depends_on:
       docs_ingestion:
         condition: service_completed_successfully
+
+  app:
+    build: ./frontend
+    container_name: app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./frontend:/app/frontend
+    restart: unless-stopped
+    depends_on:
+      - api
