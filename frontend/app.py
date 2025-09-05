@@ -1,7 +1,8 @@
 import requests
 import streamlit as st
+import os
 
-API_URL = "http://api:80"
+API_URL = os.getenv("API_URL")
 ENDPOINT = "/query"
 
 
