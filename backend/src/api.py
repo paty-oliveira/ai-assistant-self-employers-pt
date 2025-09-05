@@ -63,7 +63,7 @@ async def root():
     return {"message": "Welcome to the AI-Assistant for Self-Employeers API"}
 
 
-@app.get("/query")
+@app.post("/query")
 async def query(request: QueryRequest) -> QueryResponse:
     try:
         if not external_service:
