@@ -1,10 +1,10 @@
 import requests
 import streamlit as st
 import os
+import json
 
 API_URL = os.getenv("API_URL")
 ENDPOINT = "/query"
-
 
 def query_ai_assistant(prompt):
     try:
@@ -29,49 +29,50 @@ def generate_stream(response):
     for word in response.split(" "):
         yield word + " "
 
-
 # Initialize session state for chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Read website content config
+with open("content.json", "r") as config:
+    CONTENT = json.load(config)
+
+language = "en"
+if st.context.locale in ["pt-PT", "pt-BR"] :
+    language = "pt"
+
 # Header section
-st.title("🏛️ Portugal Self-Employeers Assistant")
-st.subheader("Your digital guide for self-employment in Portugal")
-st.markdown("Get answers about Social Security, Taxes, and labor regulations in Portugal.")
+header_content = CONTENT[language]["header"]
+
+st.title(header_content["title"])
+st.subheader(header_content["subheader"])
+st.markdown(header_content["description"])
 st.divider()
 
 # Question examples section
+sidebar_content = CONTENT[language]["sidebar"]
+
 with st.sidebar:
-    st.markdown("### 💡 How to use")
-    st.info("✍️ **Write your question** in the chat below")
-    st.info("🤖 **Get answers** from the AI assistant")
+    st.markdown(sidebar_content["info_panel"]["title"])
+    for instruction in sidebar_content["info_panel"]["steps"]:
+        st.info(instruction)
     st.divider()
-    st.markdown("### ❓ Example questions")
-    st.markdown(
-        """
-    - *What are the steps to register as self-employed in Portugal?*
-    - *How do I calculate my social security contributions?*
-    - *What tax deductions can I claim as a freelancer?*
-    - *How often do I need to file my taxes?*
-    - *What are the penalties for late tax payments?*
-    """
-    )
+    st.markdown(sidebar_content["freq_questions"]["title"])
+    for question in sidebar_content["freq_questions"]["questions"]:
+        st.markdown(f"- {question}")
     st.divider()
-    st.markdown("### ⚠️ Disclaimer")
-    st.markdown(
-        """
-    This assistant provides general information and is not a substitute for professional legal or financial advice. Always consult with a qualified expert for specific guidance.
-    """
-    )
+    st.markdown(sidebar_content["disclaimer"]["title"])
+    st.markdown(sidebar_content["disclaimer"]["content"])
 
 # Chat section
-# Display chat messages from history on app rerun
-st.markdown("### 💬 Chat with the AI Assistant")
+chat_content = CONTENT[language]["chat"]
+
+st.markdown(chat_content["title"])
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("Ask me a question!"):
+if prompt := st.chat_input(chat_content["placeholder"]):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     # Display user message in chat message container
@@ -79,7 +80,7 @@ if prompt := st.chat_input("Ask me a question!"):
         st.markdown(prompt)
 
     # Get response from AI assistant
-    with st.spinner("AI Assistant is getting your answer..."):
+    with st.spinner(chat_content["spinner_content"]):
         response = query_ai_assistant(prompt)
 
     stream = generate_stream(response)

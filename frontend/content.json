@@ -1,0 +1,66 @@
+{
+    "en": {
+        "header": {
+            "title": "🏛️ Portugal Self-Employeers Assistant",
+            "subheader": "Your digital guide for self-employment",
+            "description": "Get answers about Social Security, Taxes, and labor regulations in Portugal."
+        },
+        "sidebar": {
+            "info_panel": {
+                "title": "### 💡 How to use",
+                "steps": ["✍️ **Write your question** in the chat below", "🤖 **Get answers** from the AI assistant"]
+            },
+            "freq_questions": {
+                "title": "### ❓ Example questions",
+                "questions": [
+                    "*What are the steps to register as self-employed in Portugal?*",
+                    "*How do I calculate my social security contributions?*",
+                    "*What tax deductions can I claim as a freelancer?*",
+                    "*How often do I need to file my taxes?*",
+                    "*What are the penalties for late tax payments?*"
+                ]
+            },
+            "disclaimer": {
+                "title": "### ⚠️ Disclaimer",
+                "content": "This assistant provides general information and is not a substitute for professional legal or financial advice. Always consult with a qualified expert for specific guidance."
+            }
+        },
+        "chat": {
+            "title": "### 💬 Chat with the AI Assistant",
+            "placeholder": "Ask me a question!",
+            "spinner_content": "AI Assistant is getting your answer..."
+        }
+    },
+    "pt": {
+        "header": {
+            "title": "🏛️ Assistente para Trabalhadores Independentes em Portugal",
+            "subheader": "O seu guia digital para o trabalho independente",
+            "description": "Obtenha respostas sobre Segurança Social, Impostos e regulamentos laborais em Portugal."
+        },
+        "sidebar": {
+            "info_panel": {
+                "title": "### 💡 Como usar",
+                "steps": ["✍️ **Escreva a sua pergunta** no chat abaixo", "🤖 **Receba respostas** do assistente de IA"]
+            },
+            "freq_questions": {
+                "title": "### ❓ Perguntas de exemplo",
+                "questions": [
+                    "*Quais são os passos para me registar como trabalhador independente em Portugal?*",
+                    "*Como calculo as minhas contribuições para a Segurança Social?*",
+                    "*Que deduções fiscais posso aplicar como freelancer?*",
+                    "*Com que frequência tenho de entregar as minhas declarações fiscais?*",
+                    "*Quais são as penalizações por atraso no pagamento de impostos?*"
+                ]
+            },
+            "disclaimer": {
+                "title": "### ⚠️ Aviso",
+                "content": "Este assistente fornece informações gerais e não substitui aconselhamento jurídico ou financeiro profissional. Consulte sempre um especialista qualificado para orientação específica."
+            }
+        },
+        "chat": {
+            "title": "### 💬 Converse com o Assistente de IA",
+            "placeholder": "Faça-me uma pergunta!",
+            "spinner_content": "O Assistente de IA está a preparar a sua resposta..."
+        }
+    }
+}
