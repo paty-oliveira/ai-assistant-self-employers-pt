@@ -12,7 +12,7 @@ repos:
     - id: black
       language_version: python3
       args: ['--config', 'backend/pyproject.toml']
-      files: ^backend/
+      files: ^backend/|^frontend/
       types: [file, python]
 
   - repo: https://github.com/PyCQA/isort
@@ -21,5 +21,5 @@ repos:
     - id: isort
       language_version: python3
       args: ['--settings-path', 'backend/pyproject.toml']
-      files: ^backend/
+      files: ^backend/|^frontend/
       types: [file, python]

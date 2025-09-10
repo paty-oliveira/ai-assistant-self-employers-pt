@@ -1,10 +1,12 @@
+import json
+import os
+
 import requests
 import streamlit as st
-import os
-import json
 
 API_URL = os.getenv("API_URL")
 ENDPOINT = "/query"
+
 
 def query_ai_assistant(prompt):
     try:
@@ -29,6 +31,7 @@ def generate_stream(response):
     for word in response.split(" "):
         yield word + " "
 
+
 # Initialize session state for chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -38,14 +41,12 @@ with open("content.json", "r") as config:
     content = json.load(config)
 
 language = "en"
-if st.context.locale in ["pt-PT", "pt-BR"] :
+if st.context.locale in ["pt-PT", "pt-BR"]:
     language = "pt"
 
 head_content = content[language]["head"]
 st.set_page_config(
-    page_title=head_content["title"],
-    page_icon=":robot:",
-    initial_sidebar_state="expanded"
+    page_title=head_content["title"], page_icon=":robot:", initial_sidebar_state="expanded"
 )
 
 # Header section
