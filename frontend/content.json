@@ -1,5 +1,8 @@
 {
     "en": {
+        "head": {
+            "title": "Self-Employed Assistant"
+        },
         "header": {
             "title": "🏛️ Portugal Self-Employeers Assistant",
             "subheader": "Your digital guide for self-employment",
@@ -32,6 +35,9 @@
         }
     },
     "pt": {
+        "head": {
+            "title": "Assistente do Trabalhador Independente"
+        },
         "header": {
             "title": "🏛️ Assistente para Trabalhadores Independentes em Portugal",
             "subheader": "O seu guia digital para o trabalho independente",

@@ -35,14 +35,21 @@ if "messages" not in st.session_state:
 
 # Read website content config
 with open("content.json", "r") as config:
-    CONTENT = json.load(config)
+    content = json.load(config)
 
 language = "en"
 if st.context.locale in ["pt-PT", "pt-BR"] :
     language = "pt"
 
+head_content = content[language]["head"]
+st.set_page_config(
+    page_title=head_content["title"],
+    page_icon=":robot:",
+    initial_sidebar_state="expanded"
+)
+
 # Header section
-header_content = CONTENT[language]["header"]
+header_content = content[language]["header"]
 
 st.title(header_content["title"])
 st.subheader(header_content["subheader"])
@@ -50,7 +57,7 @@ st.markdown(header_content["description"])
 st.divider()
 
 # Question examples section
-sidebar_content = CONTENT[language]["sidebar"]
+sidebar_content = content[language]["sidebar"]
 
 with st.sidebar:
     st.markdown(sidebar_content["info_panel"]["title"])
@@ -65,7 +72,7 @@ with st.sidebar:
     st.markdown(sidebar_content["disclaimer"]["content"])
 
 # Chat section
-chat_content = CONTENT[language]["chat"]
+chat_content = content[language]["chat"]
 
 st.markdown(chat_content["title"])
 for message in st.session_state.messages:
